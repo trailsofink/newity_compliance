@@ -68,4 +68,4 @@ gem "paper_trail", "~> 17.0"
 gem "bcrypt", "~> 3.1"
 
 gem "csv", "~> 3.3"
-gem "minitest", "< 6"
+gem "minitest", "< 7"
