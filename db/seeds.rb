@@ -1,7 +1,7 @@
 require 'csv'
 
 # Create default users
-['Diana Okafor', 'Sarah Lindgren', 'Marcus Chen'].each do |name|
+[ 'Diana Okafor', 'Sarah Lindgren', 'Marcus Chen' ].each do |name|
   email = name.downcase.gsub(' ', '.') + '@newity.com'
   User.find_or_create_by!(email: email) do |u|
     u.name = name

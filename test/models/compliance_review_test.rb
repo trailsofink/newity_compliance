@@ -24,19 +24,19 @@ class ComplianceReviewTest < ActiveSupport::TestCase
   test "should require notes when Flagged" do
     @review.status = "Flagged"
     assert_not @review.valid?, "Should be invalid without notes when flagged"
-    
+
     @review.notes = "Missing signature"
     # Also needs audit trail since it's 'completed'
     @review.reviewed_by = "Marcus Chen"
     @review.review_date = Date.today
-    
+
     assert @review.valid?
   end
 
   test "should enforce audit trail on Approved" do
     @review.status = "Approved"
     assert_not @review.valid?, "Should not allow approval without reviewer and date"
-    
+
     @review.reviewed_by = "Sarah Lindgren"
     @review.review_date = Date.today
     assert @review.valid?
@@ -48,10 +48,10 @@ class ComplianceReviewTest < ActiveSupport::TestCase
     r3 = ComplianceReview.create!(application_id: "3", borrower_name: "C", item_name: "Item", status: "Flagged", target_closing_date: Date.today + 1.day, notes: "Fix", reviewed_by: "Me", review_date: Date.today)
 
     blocking = ComplianceReview.blocking_closings
-    
-    # In a full test DB there might be other seeded items, but isolated test DB might only have these. 
+
+    # In a full test DB there might be other seeded items, but isolated test DB might only have these.
     # To be safe, we check relative order or explicitly query by IDs.
-    our_blocking = blocking.where(id: [r2.id, r3.id])
+    our_blocking = blocking.where(id: [ r2.id, r3.id ])
     assert_equal 2, our_blocking.count
     assert_equal "3", our_blocking.first.application_id # Closest target date first
     assert_equal "2", our_blocking.last.application_id

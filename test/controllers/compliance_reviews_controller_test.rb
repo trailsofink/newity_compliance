@@ -3,7 +3,7 @@ require "test_helper"
 class ComplianceReviewsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = User.create!(name: "Test User", email: "test@newity.com", password: "password")
-    
+
     @review = ComplianceReview.create!(
       application_id: "COMP-TEST",
       borrower_name: "Wei King",
@@ -30,10 +30,10 @@ class ComplianceReviewsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update review and auto-stamp audit trail" do
-    patch compliance_review_url(@review), params: { 
-      compliance_review: { status: "Approved" } 
+    patch compliance_review_url(@review), params: {
+      compliance_review: { status: "Approved" }
     }
-    
+
     @review.reload
     assert_redirected_to compliance_reviews_url
     assert_equal "Approved", @review.status
