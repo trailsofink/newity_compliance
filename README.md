@@ -1,24 +1,57 @@
-# README
+# Newity Compliance Assessment App
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a Ruby on Rails application developed for the compliance team. It provides a comprehensive dashboard for reviewers to manage their compliance queue, prioritize tasks, and track capacity.
 
-Things you may want to cover:
+## Key Features
+- **Compliance Dashboard:** Visual overview of pending, flagged, and overdue tasks, alongside reviewer capacity metrics.
+- **Task Management:** Create, assign, edit, and track compliance reviews for specific applications.
+- **Audit Trails:** Built-in auditing using PaperTrail to safely track changes to compliance reviews.
+- **Authentication:** Secure user login and authorization system.
+- **Modern UI:** Styled with Tailwind CSS for a clean, responsive, and robust interface.
 
-* Ruby version
+## Tech Stack
+- **Ruby:** 4.0.1
+- **Rails:** 8.0.4
+- **Database:** SQLite3
+- **Frontend:** HTML, Tailwind CSS, Hotwire (Turbo & Stimulus)
+- **Background Jobs:** Solid Queue
+- **Caching:** Solid Cache
 
-* System dependencies
+## Local Development Setup
 
-* Configuration
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd newity_compliance
+   ```
 
-* Database creation
+2. **Install dependencies:**
+   Ensure you have Ruby 4.0.1 installed, then run:
+   ```bash
+   bundle install
+   ```
 
-* Database initialization
+3. **Setup the database:**
+   This commands creates the database, schema, and seeds standard data:
+   ```bash
+   bin/rails db:setup
+   ```
 
-* How to run the test suite
+4. **Start the Rails server:**
+   Use the `dev` script to start Puma and Tailwind watch components:
+   ```bash
+   bin/dev
+   ```
 
-* Services (job queues, cache servers, search engines, etc.)
+5. **Access the application:**
+   Open a browser and navigate to `http://localhost:3000`
 
-* Deployment instructions
+## Testing
 
-* ...
+Minitest is configured for models, controllers, and system tests alongside Capybara and Selenium.
+
+To run the test suite:
+```bash
+bin/rails test
+bin/rails test:system
+```
