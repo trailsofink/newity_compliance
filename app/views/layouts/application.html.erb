@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Newity Compliance" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-[#f8f9fa] text-[#1d314c] font-sans antialiased min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex">
+            <div class="shrink-0 flex items-center">
+              <%= link_to root_path do %>
+                <img class="h-8 w-auto px-2" src="/NEWITY_Horizontal-Dark-Blue.svg" alt="Newity Logo">
+              <% end %>
+            </div>
+            <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
+              <%= link_to "Dashboard", root_path, class: "border-transparent hover:text-[#0036f3] text-gray-500 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium #{'border-[#0036f3] text-[#1d314c]' if current_page?(root_path)}" %>
+              <%= link_to "Queue", compliance_reviews_path, class: "border-transparent hover:text-[#0036f3] text-gray-500 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium #{'border-[#0036f3] text-[#1d314c]' if current_page?(compliance_reviews_path)}" %>
+            </div>
+          </div>
+          <div class="hidden sm:ml-6 sm:flex sm:items-center">
+            <% if current_user %>
+              <div class="ml-3 relative flex items-center space-x-4">
+                <span class="text-sm font-medium text-gray-700">Hi, <%= current_user.name %></span>
+                <%= button_to "Sign out", logout_path, method: :delete, class: "text-sm text-red-600 hover:text-red-800" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <% if notice %>
+        <div class="mb-6 bg-green-50/80 backdrop-blur border border-green-200 text-green-700 px-4 py-3 rounded-xl shadow-sm relative" role="alert">
+          <span class="block sm:inline"><%= notice %></span>
+        </div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+<div class="mb-8">
+  <h1 class="text-4xl font-extrabold text-[#1d314c] tracking-tight">Compliance Dashboard</h1>
+  <p class="mt-2 text-gray-600 text-lg">Overview of current compliance queue and reviewer capacity.</p>
+</div>
+
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+  <!-- Total -->
+  <div class="bg-white/70 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center transition hover:shadow-md">
+    <div class="p-3 rounded-full bg-blue-100 text-[#0036f3] mr-4">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-gray-500 uppercase tracking-widest">Total Reviews</p>
+      <p class="text-3xl font-bold text-[#1d314c]"><%= @total_reviews %></p>
+    </div>
+  </div>
+
+  <!-- Pending -->
+  <div class="bg-white/70 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center transition hover:shadow-md">
+    <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-gray-500 uppercase tracking-widest">Pending</p>
+      <p class="text-3xl font-bold text-[#1d314c]"><%= @pending_count %></p>
+    </div>
+  </div>
+
+  <!-- Flagged -->
+  <div class="bg-white/70 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center transition hover:shadow-md">
+    <div class="p-3 rounded-full bg-red-100 text-red-600 mr-4">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-gray-500 uppercase tracking-widest">Flagged</p>
+      <p class="text-3xl font-bold text-[#1d314c]"><%= @flagged_count %></p>
+    </div>
+  </div>
+</div>
+
+<!-- Reviewer Capacity (Stoplight) -->
+<div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg border border-gray-50 overflow-hidden">
+  <div class="px-8 py-6 border-b border-gray-100 bg-white">
+    <h2 class="text-2xl font-bold text-[#1d314c]">Reviewer Capacity</h2>
+    <p class="text-sm text-gray-500 mt-1">Active assigned tasks (Pending, In Review, Flagged)</p>
+  </div>
+  
+  <div class="p-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <% @capacity.sort_by { |_, count| count }.reverse.each do |reviewer, count| %>
+        <% 
+           color_class = if count > 10
+                           "bg-red-50 border-red-200 text-red-700"
+                         elsif count > 5
+                           "bg-yellow-50 border-yellow-200 text-yellow-700"
+                         else
+                           "bg-green-50 border-[#75ff6f] text-green-800"
+                         end
+           
+           indicator_class = if count > 10
+                               "bg-red-500"
+                             elsif count > 5
+                               "bg-yellow-400"
+                             else
+                               "bg-[#75ff6f]"
+                             end
+        %>
+        <div class="rounded-2xl border <%= color_class %> p-6 relative overflow-hidden flex flex-col items-center text-center shadow-sm">
+          <div class="absolute top-0 w-full h-2 <%= indicator_class %>"></div>
+          <div class="w-16 h-16 rounded-full flex items-center justify-center bg-white shadow-sm mb-4">
+            <span class="text-2xl font-bold"><%= count %></span>
+          </div>
+          <h3 class="text-lg font-semibold"><%= reviewer.presence || "Unassigned" %></h3>
+          <p class="text-sm mt-1 opacity-80 font-medium">Active Tasks</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

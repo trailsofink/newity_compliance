@@ -1,0 +1,92 @@
+<div class="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+  <div>
+    <h1 class="text-3xl font-extrabold text-[#1d314c] tracking-tight">Compliance Queue</h1>
+    <p class="mt-2 text-gray-600">Manage and unblock compliance tasks.</p>
+  </div>
+  
+  <div class="bg-white/80 backdrop-blur-md p-4 rounded-xl shadow-sm border border-gray-100 flex-none">
+    <%= form_with url: compliance_reviews_path, method: :get, local: true, class: "flex items-end gap-4" do |f| %>
+      <div>
+        <%= f.label :status, "Status", class: "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1" %>
+        <%= f.select :status, options_for_select(@statuses, params[:status]), { include_blank: "All Statuses" }, class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#0036f3] focus:border-[#0036f3] sm:text-sm rounded-md" %>
+      </div>
+      
+      <div>
+        <%= f.label :assigned_reviewer, "Reviewer", class: "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1" %>
+        <%= f.select :assigned_reviewer, options_for_select(@reviewers, params[:assigned_reviewer]), { include_blank: "All Reviewers" }, class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#0036f3] focus:border-[#0036f3] sm:text-sm rounded-md" %>
+      </div>
+      
+      <div>
+        <%= f.submit "Filter", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#0036f3] hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0036f3] cursor-pointer" %>
+      </div>
+      
+      <% if params[:status].present? || params[:assigned_reviewer].present? %>
+        <div>
+          <%= link_to "Clear", compliance_reviews_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<div class="bg-white/80 backdrop-blur-xl shadow-lg rounded-2xl overflow-hidden border border-gray-100">
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50/50">
+        <tr>
+          <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">App ID</th>
+          <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Borrower</th>
+          <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Target Closing</th>
+          <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Item</th>
+          <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+          <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Assigned</th>
+          <th scope="col" class="relative px-6 py-4"><span class="sr-only">Review</span></th>
+        </tr>
+      </thead>
+      <tbody class="bg-white/50 divide-y divide-gray-200">
+        <% @reviews.each do |review| %>
+          <% row_class = review.blocking? ? "bg-red-50/60 transition hover:bg-red-100/60" : "transition hover:bg-gray-50/60" %>
+          <tr class="<%= row_class %>">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+              <%= review.application_id %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              <%= review.borrower_name %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              <span class="<%= review.blocking? ? 'text-red-700 font-bold' : '' %>">
+                <%= review.target_closing_date&.strftime("%b %d, %Y") || 'N/A' %>
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              <%= review.item_name %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <% status_color = case review.status
+                 when 'Approved' then 'bg-green-100 text-green-800 border-green-200'
+                 when 'Flagged' then 'bg-red-100 text-red-800 border-red-200'
+                 when 'Pending' then 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                 when 'In Review' then 'bg-blue-100 text-blue-800 border-blue-200'
+                 else 'bg-gray-100 text-gray-800 border-gray-200'
+                 end %>
+              <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border <%= status_color %>">
+                <%= review.status %>
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+              <div class="flex items-center">
+                <div class="h-6 w-6 rounded-full bg-[#1d314c] flex items-center justify-center text-white text-xs mr-2 font-bold">
+                  <%= review.assigned_reviewer.to_s[0] || "?" %>
+                </div>
+                <%= review.assigned_reviewer || "Unassigned" %>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <%= link_to "Review Task", edit_compliance_review_path(review), class: "text-[#0036f3] hover:text-blue-900 font-semibold" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

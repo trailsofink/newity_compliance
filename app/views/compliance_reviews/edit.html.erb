@@ -1,0 +1,147 @@
+<div class="mb-8 flex items-center justify-between">
+  <div>
+    <%= link_to "&larr; Back to Queue".html_safe, compliance_reviews_path, class: "text-sm text-gray-500 hover:text-[#0036f3] font-medium" %>
+    <h1 class="text-3xl font-extrabold text-[#1d314c] tracking-tight mt-2">Compliance Review</h1>
+    <p class="mt-1 text-gray-600">Application: <strong class="text-gray-900"><%= @review.application_id %></strong></p>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8" data-controller="tabs">
+  <!-- Left Column: Edit Form -->
+  <div class="lg:col-span-2 space-y-6">
+    <div class="bg-white/80 backdrop-blur-xl shadow-lg rounded-2xl border border-gray-100 overflow-hidden">
+      <div class="px-6 py-5 border-b border-gray-100 bg-white">
+        <h2 class="text-lg font-semibold text-[#1d314c]">Review Details</h2>
+      </div>
+      
+      <div class="p-6">
+        <div class="grid grid-cols-2 gap-4 mb-8 p-4 bg-gray-50 rounded-xl border border-gray-100">
+          <div>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Borrower</p>
+            <p class="text-sm font-medium text-gray-900 mt-1"><%= @review.borrower_name %></p>
+          </div>
+          <div>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Item Name</p>
+            <p class="text-sm font-medium text-gray-900 mt-1"><%= @review.item_name %></p>
+          </div>
+          <div>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Target Closing</p>
+            <p class="text-sm font-medium <%= @review.blocking? ? 'text-red-700' : 'text-gray-900' %> mt-1">
+              <%= @review.target_closing_date&.strftime("%B %d, %Y") %>
+            </p>
+          </div>
+          <div>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Loan Amount</p>
+            <p class="text-sm font-medium text-gray-900 mt-1">
+              <%= number_to_currency(@review.loan_amount) %>
+            </p>
+          </div>
+        </div>
+
+        <%= form_with model: @review, class: "space-y-6" do |f| %>
+          <% if @review.errors.any? %>
+            <div class="bg-red-50 text-red-700 p-4 rounded-xl text-sm mb-6 border border-red-200">
+              <h2 class="font-bold mb-2"><%= pluralize(@review.errors.count, "error") %> prohibited this review from being saved:</h2>
+              <ul class="list-disc pl-5 space-y-1">
+                <% @review.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <%= f.label :status, class: "block text-sm font-semibold text-gray-700 mb-1" %>
+              <%= f.select :status, ComplianceReview::VALID_STATUSES, {}, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0036f3] focus:ring-[#0036f3] sm:text-sm" %>
+            </div>
+
+            <div>
+              <%= f.label :priority, class: "block text-sm font-semibold text-gray-700 mb-1" %>
+              <%= f.select :priority, ['Low', 'Medium', 'High', 'Critical'], { include_blank: 'Select Priority' }, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0036f3] focus:ring-[#0036f3] sm:text-sm" %>
+            </div>
+
+            <div class="md:col-span-2">
+              <%= f.label :assigned_reviewer, class: "block text-sm font-semibold text-gray-700 mb-1" %>
+              <%= f.select :assigned_reviewer, ComplianceReview.distinct.pluck(:assigned_reviewer).compact, { include_blank: 'Unassigned' }, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0036f3] focus:ring-[#0036f3] sm:text-sm" %>
+            </div>
+
+            <div class="md:col-span-2">
+              <%= f.label :notes, "Review Notes & Remediation", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+              <%= f.text_area :notes, rows: 4, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0036f3] focus:ring-[#0036f3] sm:text-sm", placeholder: "Add reasoning for Flagged or Waived items..." %>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-gray-100 flex justify-end">
+            <%= f.submit "Save Changes", class: "inline-flex justify-center rounded-md border border-transparent bg-[#0036f3] py-2 px-6 text-sm font-medium text-white shadow-sm hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-[#0036f3] focus:ring-offset-2 cursor-pointer transition" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column: Audit Trail Tab -->
+  <div class="lg:col-span-1">
+    <div class="bg-white/80 backdrop-blur-xl shadow-lg rounded-2xl border border-gray-100 overflow-hidden sticky top-24">
+      <div class="px-6 py-5 border-b border-gray-100 bg-white flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-[#1d314c] flex items-center">
+          <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          Audit History
+        </h2>
+      </div>
+      
+      <div class="p-6 max-h-[600px] overflow-y-auto">
+        <% if @review.versions.empty? %>
+          <div class="text-center py-8">
+            <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <p class="mt-2 text-sm text-gray-500">No edit history recorded yet.</p>
+          </div>
+        <% else %>
+          <div class="flow-root">
+            <ul role="list" class="-mb-8">
+              <% @review.versions.reverse.each_with_index do |version, index| %>
+                <li>
+                  <div class="relative pb-8">
+                    <% if index != @review.versions.length - 1 %>
+                      <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                    <% end %>
+                    <div class="relative flex space-x-3">
+                      <div>
+                        <span class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center ring-8 ring-white">
+                          <svg class="h-4 w-4 text-[#0036f3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                        </span>
+                      </div>
+                      <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                        <div>
+                          <p class="text-sm text-gray-500">Edited by <span class="font-medium text-gray-900"><%= User.find_by(id: version.whodunnit)&.name || version.whodunnit || "System" %></span></p>
+                          
+                          <% if version.changeset.present? %>
+                            <div class="mt-2 text-xs bg-gray-50 p-3 rounded-lg border border-gray-100">
+                              <ul class="space-y-2">
+                                <% version.changeset.each do |attribute, values| %>
+                                  <% next if ['updated_at', 'created_at'].include?(attribute) %>
+                                  <li>
+                                    <span class="font-medium text-gray-700 capitalize"><%= attribute.humanize %>:</span>
+                                    <span class="text-red-500 line-through mr-1"><%= values[0].to_s.truncate(30).presence || "nil" %></span>
+                                    <span class="text-green-600">&rarr; <%= values[1].to_s.truncate(30).presence || "nil" %></span>
+                                  </li>
+                                <% end %>
+                              </ul>
+                            </div>
+                          <% end %>
+                        </div>
+                        <div class="text-right text-xs whitespace-nowrap text-gray-500">
+                          <time datetime="<%= version.created_at %>"><%= time_ago_in_words(version.created_at) %> ago</time>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
