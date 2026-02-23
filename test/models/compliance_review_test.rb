@@ -2,10 +2,9 @@ require "test_helper"
 
 class ComplianceReviewTest < ActiveSupport::TestCase
   def setup
+    @application = applications(:one)
     @review = ComplianceReview.new(
-      application_id: "COMP-2026-2001",
-      borrower_name: "Carlos Martin",
-      target_closing_date: Date.today + 5.days,
+      application: @application,
       item_name: "Lender Authorization Check",
       status: "Pending"
     )
@@ -43,10 +42,14 @@ class ComplianceReviewTest < ActiveSupport::TestCase
   end
 
   test "blocking_closings scope orders by nearest date and excludes Approved" do
-    ComplianceReview.create!(application_id: "1", borrower_name: "A", item_name: "Item", status: "Approved", target_closing_date: Date.today + 1.day, reviewed_by: "Me", review_date: Date.today)
-    r2 = ComplianceReview.create!(application_id: "2", borrower_name: "B", item_name: "Item", status: "Pending", target_closing_date: Date.today + 2.days)
-    
-    r3 = ComplianceReview.new(application_id: "3", borrower_name: "C", item_name: "Item", status: "Flagged", target_closing_date: Date.today + 1.day, reviewed_by: "Me", review_date: Date.today)
+    app1 = Application.create!(application_identifier: "1", borrower_name: "A", target_closing_date: Date.today + 1.day)
+    app2 = Application.create!(application_identifier: "2", borrower_name: "B", target_closing_date: Date.today + 2.days)
+    app3 = Application.create!(application_identifier: "3", borrower_name: "C", target_closing_date: Date.today + 1.day)
+
+    ComplianceReview.create!(application: app1, item_name: "Item", status: "Approved", reviewed_by: "Me", review_date: Date.today)
+    r2 = ComplianceReview.create!(application: app2, item_name: "Item", status: "Pending")
+
+    r3 = ComplianceReview.new(application: app3, item_name: "Item", status: "Flagged", reviewed_by: "Me", review_date: Date.today)
     r3.comments.build(body: "Fix", user: users(:one))
     r3.save!
 
@@ -56,7 +59,7 @@ class ComplianceReviewTest < ActiveSupport::TestCase
     # To be safe, we check relative order or explicitly query by IDs.
     our_blocking = blocking.where(id: [ r2.id, r3.id ])
     assert_equal 2, our_blocking.count
-    assert_equal "3", our_blocking.first.application_id # Closest target date first
-    assert_equal "2", our_blocking.last.application_id
+    assert_equal "3", our_blocking.first.application.application_identifier # Closest target date first
+    assert_equal "2", our_blocking.last.application.application_identifier
   end
 end

@@ -34,8 +34,9 @@
               <% end %>
             </div>
             <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-              <%= link_to "Dashboard", root_path, class: "border-transparent hover:text-[#0036f3] text-gray-500 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium #{'border-[#0036f3] text-[#1d314c]' if current_page?(root_path)}" %>
-              <%= link_to "Queue", compliance_reviews_path, class: "border-transparent hover:text-[#0036f3] text-gray-500 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium #{'border-[#0036f3] text-[#1d314c]' if current_page?(compliance_reviews_path)}" %>
+              <%= link_to "Dashboard", root_path, class: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium #{current_page?(root_path) ? 'border-primary-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} transition-colors duration-200" %>
+            <%= link_to "Applications", applications_path, class: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium #{current_page?(applications_path) || (controller_name == 'applications' && action_name == 'show') ? 'border-[#0036f3] text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} transition-colors duration-200" %>
+            <%= link_to "Queue", compliance_reviews_path, class: "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium #{current_page?(compliance_reviews_path) || (controller_name == 'compliance_reviews' && action_name == 'edit') ? 'border-[#0036f3] text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} transition-colors duration-200" %>
             </div>
           </div>
           <div class="hidden sm:ml-6 sm:flex sm:items-center">

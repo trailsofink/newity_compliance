@@ -1,27 +1,21 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  application_id: MyString
-  borrower_name: MyString
-  loan_amount: 9.99
-  target_closing_date: 2026-02-23
-  item_name: MyString
-  status: MyString
-  assigned_reviewer: MyString
-  assigned_date: 2026-02-23
-  review_date: 2026-02-23
-  reviewed_by: MyString
-  priority: MyString
+  application: one
+  item_name: "Credit Report"
+  status: "Pending"
+  assigned_reviewer: "Alice"
+  assigned_date: "2026-02-01"
+  review_date: nil
+  reviewed_by: nil
+  priority: "High"
 
 two:
-  application_id: MyString
-  borrower_name: MyString
-  loan_amount: 9.99
-  target_closing_date: 2026-02-23
-  item_name: MyString
-  status: MyString
-  assigned_reviewer: MyString
-  assigned_date: 2026-02-23
-  review_date: 2026-02-23
-  reviewed_by: MyString
-  priority: MyString
+  application: two
+  item_name: "KYC Documents"
+  status: "Approved"
+  assigned_reviewer: "Bob"
+  assigned_date: "2026-02-05"
+  review_date: "2026-02-06"
+  reviewed_by: "Bob"
+  priority: "Medium"

@@ -48,7 +48,7 @@
           <% row_class = review.blocking? ? "bg-red-50/60 transition hover:bg-red-100/60" : "transition hover:bg-gray-50/60" %>
           <tr class="<%= row_class %>">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-              <%= review.application_id %>
+              <%= review.application_identifier %>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
               <%= review.borrower_name %>

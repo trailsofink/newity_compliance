@@ -4,12 +4,16 @@ class ComplianceReviewsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = User.create!(name: "Test User", email: "test@newity.com", password: "password")
 
-    @review = ComplianceReview.create!(
-      application_id: "COMP-TEST",
+    @application = Application.create!(
+      application_identifier: "COMP-TEST",
       borrower_name: "Wei King",
-      item_name: "Credit Memo Review",
-      status: "Pending",
       target_closing_date: Date.today + 10.days
+    )
+
+    @review = ComplianceReview.create!(
+      application: @application,
+      item_name: "Credit Memo Review",
+      status: "Pending"
     )
 
     # Simple log in step since ApplicationController requires authenticated user

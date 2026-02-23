@@ -12,7 +12,7 @@ class ComplianceReviewsController < ApplicationController
     @reviews = @reviews.by_reviewer(params[:assigned_reviewer]) if params[:assigned_reviewer].present?
 
     # Priority sorting (Closest closing dates first to unblock loans)
-    @reviews = @reviews.order(target_closing_date: :asc)
+    @reviews = @reviews.joins(:application).order("applications.target_closing_date ASC")
 
     @reviewers = ComplianceReview.distinct.pluck(:assigned_reviewer).compact
     @statuses = ComplianceReview::VALID_STATUSES + [ "Overdue" ]

@@ -5,8 +5,11 @@ class ComplianceReview < ApplicationRecord
 
   VALID_STATUSES = [ "Pending", "In Review", "Approved", "Flagged", "Waived" ].freeze
 
-  validates :application_id, :borrower_name, :item_name, :status, presence: true
+  validates :item_name, :status, presence: true
   validates :status, inclusion: { in: VALID_STATUSES }
+
+  belongs_to :application
+  delegate :borrower_name, :loan_amount, :target_closing_date, :application_identifier, to: :application
 
   # Audit trail validations: If it's finalized, we MUST know who did it and when.
   validates :reviewed_by, :review_date, presence: true, if: :completed?
@@ -16,16 +19,18 @@ class ComplianceReview < ApplicationRecord
 
   # Scopes for querying the queue
   scope :blocking_closings, -> {
-    where(status: [ "Pending", "In Review", "Flagged" ])
-    .order(target_closing_date: :asc)
+    joins(:application)
+    .where(status: [ "Pending", "In Review", "Flagged" ])
+    .order("applications.target_closing_date ASC")
   }
 
   scope :by_reviewer, ->(reviewer) { where(assigned_reviewer: reviewer) if reviewer.present? }
   scope :by_status, ->(status) { where(status: status) if status.present? }
 
   scope :overdue, -> {
-    where(status: [ "Pending", "In Review", "Flagged" ])
-    .where("target_closing_date < ?", Date.today)
+    joins(:application)
+    .where(status: [ "Pending", "In Review", "Flagged" ])
+    .where("applications.target_closing_date < ?", Date.today)
   }
 
   def completed?

@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_23_182543) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_23_195741) do
+  create_table "applications", force: :cascade do |t|
+    t.string "application_identifier"
+    t.string "borrower_name"
+    t.decimal "loan_amount"
+    t.date "target_closing_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["application_identifier"], name: "index_applications_on_application_identifier", unique: true
+  end
+
   create_table "comments", force: :cascade do |t|
     t.integer "compliance_review_id", null: false
     t.integer "user_id", null: false
@@ -22,10 +32,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_23_182543) do
   end
 
   create_table "compliance_reviews", force: :cascade do |t|
-    t.string "application_id"
-    t.string "borrower_name"
-    t.decimal "loan_amount"
-    t.date "target_closing_date"
     t.string "item_name"
     t.string "status"
     t.string "assigned_reviewer"
@@ -35,6 +41,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_23_182543) do
     t.string "priority"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "application_id"
+    t.index ["application_id"], name: "index_compliance_reviews_on_application_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -58,4 +66,5 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_23_182543) do
 
   add_foreign_key "comments", "compliance_reviews"
   add_foreign_key "comments", "users"
+  add_foreign_key "compliance_reviews", "applications"
 end
