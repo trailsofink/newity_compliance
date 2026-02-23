@@ -120,9 +120,14 @@
                 </td>
                 <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
                   <div class="flex items-center">
-                    <div class="h-5 w-5 rounded-full bg-[#1d314c] flex items-center justify-center text-white text-[10px] mr-2 font-bold">
-                      <%= review.assigned_reviewer.to_s[0] || "?" %>
-                    </div>
+                    <% assignee = User.find_by(name: review.assigned_reviewer) %>
+                    <% if assignee&.profile_image&.attached? %>
+                      <%= image_tag assignee.profile_image, class: "h-5 w-5 rounded-full object-cover mr-2" %>
+                    <% else %>
+                      <div class="h-5 w-5 rounded-full bg-[#1d314c] flex items-center justify-center text-white text-[10px] mr-2 font-bold">
+                        <%= review.assigned_reviewer.to_s[0] || "?" %>
+                      </div>
+                    <% end %>
                     <%= review.assigned_reviewer || "Unassigned" %>
                   </div>
                 </td>
