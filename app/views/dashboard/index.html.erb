@@ -59,22 +59,28 @@
   
   <div class="p-8">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <% @capacity.sort_by { |_, count| count }.reverse.each do |reviewer, count| %>
+      <% 
+        sorted_capacity = @capacity.sort_by { |_, count| count }.reverse 
+        sorted_capacity.each_with_index do |(reviewer, count), index| 
+      %>
         <% 
-           color_class = if count > 10
+           is_highest = index == 0
+           is_lowest = index == sorted_capacity.length - 1 && sorted_capacity.length > 1
+           
+           color_class = if is_highest
                            "bg-red-50 border-red-200 text-red-700"
-                         elsif count > 5
-                           "bg-yellow-50 border-yellow-200 text-yellow-700"
-                         else
+                         elsif is_lowest
                            "bg-green-50 border-[#75ff6f] text-green-800"
+                         else
+                           "bg-yellow-50 border-yellow-200 text-yellow-700"
                          end
            
-           indicator_class = if count > 10
+           indicator_class = if is_highest
                                "bg-red-500"
-                             elsif count > 5
-                               "bg-yellow-400"
-                             else
+                             elsif is_lowest
                                "bg-[#75ff6f]"
+                             else
+                               "bg-yellow-400"
                              end
         %>
         <a href="<%= compliance_reviews_path(status: '', assigned_reviewer: reviewer, commit: 'Filter') %>" class="block rounded-2xl border <%= color_class %> p-6 relative overflow-hidden flex flex-col items-center text-center shadow-sm hover:shadow-md transition transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0036f3]">

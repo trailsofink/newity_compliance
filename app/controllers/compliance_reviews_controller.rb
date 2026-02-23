@@ -1,6 +1,6 @@
 class ComplianceReviewsController < ApplicationController
   def index
-    @reviews = ComplianceReview.active
+    @reviews = ComplianceReview.all
 
     # Filters
     if params[:status] == "Overdue"
@@ -18,12 +18,6 @@ class ComplianceReviewsController < ApplicationController
     @statuses = ComplianceReview::VALID_STATUSES + ["Overdue"]
   end
 
-  def closed
-    @reviews = ComplianceReview.closed.order(updated_at: :desc)
-    @reviewers = ComplianceReview.distinct.pluck(:assigned_reviewer).compact
-    @statuses = ComplianceReview::VALID_STATUSES
-  end
-
   def edit
     @review = ComplianceReview.find(params[:id])
   end
@@ -32,8 +26,7 @@ class ComplianceReviewsController < ApplicationController
     @review = ComplianceReview.find(params[:id])
 
     # Auto-stamp audit trail if status changes to a completed state
-    is_closing = ActiveRecord::Type::Boolean.new.cast(compliance_review_params[:closed])
-    if audit_trail_required?(compliance_review_params[:status]) || is_closing
+    if audit_trail_required?(compliance_review_params[:status])
       @review.reviewed_by ||= current_user&.name || "System"
       @review.review_date ||= Date.today
     end
@@ -48,7 +41,7 @@ class ComplianceReviewsController < ApplicationController
   private
 
   def compliance_review_params
-    params.require(:compliance_review).permit(:status, :priority, :assigned_reviewer, :closed)
+    params.require(:compliance_review).permit(:status, :priority, :assigned_reviewer)
   end
 
   def audit_trail_required?(new_status)
