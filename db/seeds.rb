@@ -16,19 +16,28 @@ csv_text = File.read(Rails.root.join('../sample_data_c_compliance_queue.csv'))
 csv = CSV.parse(csv_text, headers: true)
 
 csv.each do |row|
-  ComplianceReview.create!(
-    application_id: row['application_id'],
-    borrower_name: row['borrower_name'],
-    loan_amount: row['loan_amount'],
-    target_closing_date: row['target_closing_date'],
+  app = Application.find_or_create_by!(application_identifier: row['application_id']) do |a|
+    a.borrower_name = row['borrower_name']
+    a.loan_amount = row['loan_amount']
+    a.target_closing_date = row['target_closing_date']
+  end
+
+  review = ComplianceReview.new(
+    application: app,
     item_name: row['compliance_item'],
     status: row['status'],
     assigned_reviewer: row['assigned_reviewer'],
     assigned_date: row['assigned_date'],
     review_date: row['review_date'],
     reviewed_by: row['reviewed_by'],
-    notes: row['notes'],
     priority: row['priority']
   )
+
+  if row['notes'].present?
+    user = User.find_by(name: row['reviewed_by'].presence || row['assigned_reviewer'].presence) || User.first
+    review.comments.build(body: row['notes'], user: user)
+  end
+
+  review.save!
 end
-puts "Seeded #{ComplianceReview.count} records."
+puts "Seeded #{ComplianceReview.count} records and #{Comment.count} comments."

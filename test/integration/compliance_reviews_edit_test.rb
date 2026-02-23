@@ -12,13 +12,13 @@ class ComplianceReviewsEditTest < ActionDispatch::IntegrationTest
   test "can post a comment without redirecting away from edit page" do
     assert_difference("Comment.count", 1) do
       post compliance_review_comments_path(@review), params: {
-        comment: { body: "This is a test comment" }
+        comment: { body: "Reviewed the recent updates to the collateral documentation." }
       }
     end
 
     assert_redirected_to edit_compliance_review_path(@review)
     follow_redirect!
-    assert_match "This is a test comment", response.body
+    assert_match "Reviewed the recent updates", response.body
   end
 
   test "can save review changes without affecting comments" do

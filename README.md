@@ -31,11 +31,12 @@ This is a Ruby on Rails application developed for the compliance team. It provid
    bundle install
    ```
 
-3. **Setup the database:**
-   This commands creates the database, schema, and seeds standard data:
+3. **Setup the database and run the initial seed of the CSV:**
+   This command creates the database, schema, and imports the `sample_data_c_compliance_queue.csv` into the database, transforming the notes column into standard comments:
    ```bash
    bin/rails db:setup
    ```
+   *Note: If you ever need to wipe the test and development data and re-import from the CSV, simply run `bin/rails db:drop db:setup`.*
 
 4. **Start the Rails server:**
    Use the `dev` script to start Puma and Tailwind watch components:
