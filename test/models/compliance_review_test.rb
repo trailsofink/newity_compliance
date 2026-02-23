@@ -21,11 +21,11 @@ class ComplianceReviewTest < ActiveSupport::TestCase
     assert_includes @review.errors[:status], "is not included in the list"
   end
 
-  test "should require notes when Flagged" do
+  test "should require comment when Flagged" do
     @review.status = "Flagged"
-    assert_not @review.valid?, "Should be invalid without notes when flagged"
+    assert_not @review.valid?, "Should be invalid without comment when flagged"
 
-    @review.notes = "Missing signature"
+    @review.comments.build(body: "Missing signature", user: users(:one))
     # Also needs audit trail since it's 'completed'
     @review.reviewed_by = "Marcus Chen"
     @review.review_date = Date.today
@@ -45,7 +45,10 @@ class ComplianceReviewTest < ActiveSupport::TestCase
   test "blocking_closings scope orders by nearest date and excludes Approved" do
     ComplianceReview.create!(application_id: "1", borrower_name: "A", item_name: "Item", status: "Approved", target_closing_date: Date.today + 1.day, reviewed_by: "Me", review_date: Date.today)
     r2 = ComplianceReview.create!(application_id: "2", borrower_name: "B", item_name: "Item", status: "Pending", target_closing_date: Date.today + 2.days)
-    r3 = ComplianceReview.create!(application_id: "3", borrower_name: "C", item_name: "Item", status: "Flagged", target_closing_date: Date.today + 1.day, notes: "Fix", reviewed_by: "Me", review_date: Date.today)
+    
+    r3 = ComplianceReview.new(application_id: "3", borrower_name: "C", item_name: "Item", status: "Flagged", target_closing_date: Date.today + 1.day, reviewed_by: "Me", review_date: Date.today)
+    r3.comments.build(body: "Fix", user: users(:one))
+    r3.save!
 
     blocking = ComplianceReview.blocking_closings
 

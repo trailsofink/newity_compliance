@@ -21,12 +21,12 @@ class ComplianceReviewsController < ApplicationController
     @review = ComplianceReview.find(params[:id])
 
     # Auto-stamp audit trail if status changes to a completed state
-    if audit_trail_required?(review_params[:status])
+    if audit_trail_required?(compliance_review_params[:status])
       @review.reviewed_by ||= current_user&.name || "System"
       @review.review_date ||= Date.today
     end
 
-    if @review.update(review_params)
+    if @review.update(compliance_review_params)
       redirect_to compliance_reviews_path, notice: "Review updated successfully."
     else
       render :edit, status: :unprocessable_entity
@@ -35,8 +35,8 @@ class ComplianceReviewsController < ApplicationController
 
   private
 
-  def review_params
-    params.require(:compliance_review).permit(:status, :assigned_reviewer, :notes, :priority)
+  def compliance_review_params
+    params.require(:compliance_review).permit(:status, :priority, :assigned_reviewer)
   end
 
   def audit_trail_required?(new_status)

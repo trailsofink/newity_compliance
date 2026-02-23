@@ -3,7 +3,9 @@ Rails.application.routes.draw do
   post "login", to: "sessions#create"
   delete "logout", to: "sessions#destroy"
 
-  resources :compliance_reviews, only: [ :index, :edit, :update ]
+  resources :compliance_reviews, only: [ :index, :edit, :update ] do
+    resources :comments, only: [ :create ]
+  end
   root "dashboard#index"
 
   get "up" => "rails/health#show", as: :rails_health_check

@@ -3,6 +3,8 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
   before_action :authenticate_user!
+  before_action :set_paper_trail_whodunnit
+
   helper_method :current_user
 
   def current_user
