@@ -1,0 +1,15 @@
+<div class="mb-8 pl-1">
+  <div class="flex items-center gap-4 mb-4">
+    <%= link_to applications_path, class: "text-gray-400 hover:text-gray-600 transition-colors bg-white/50 backdrop-blur p-2 rounded-full border border-gray-100 shadow-sm" do %>
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
+    <% end %>
+    <h1 class="text-3xl font-extrabold text-[#1d314c] tracking-tight">New Application</h1>
+  </div>
+  <p class="text-gray-600 ml-12">Create a new loan application and define initial compliance tasks.</p>
+</div>
+
+<div class="bg-white/80 backdrop-blur-xl shadow-lg rounded-2xl overflow-hidden border border-gray-100 p-6 md:p-8">
+  <%= render "form", application: @application %>
+</div>

@@ -1,0 +1,29 @@
+<div class="task-fields grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-gray-50/50 p-4 rounded-xl border border-gray-100 relative group transition-all">
+  <div class="md:col-span-4">
+    <%= f.label :item_name, "Task Name", class: "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1" %>
+    <%= f.text_field :item_name, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0036f3] focus:ring-[#0036f3] text-sm", placeholder: "e.g. Identity Verification" %>
+  </div>
+  
+  <div class="md:col-span-3">
+    <%= f.label :assigned_reviewer, "Assignee", class: "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1" %>
+    <%= f.text_field :assigned_reviewer, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0036f3] focus:ring-[#0036f3] text-sm", placeholder: "e.g. Jane Doe" %>
+  </div>
+  
+  <div class="md:col-span-2">
+    <%= f.label :status, "Status", class: "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1" %>
+    <%= f.select :status, ComplianceReview::VALID_STATUSES, { selected: f.object.status || "Pending" }, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0036f3] focus:ring-[#0036f3] text-sm" %>
+  </div>
+  
+  <div class="md:col-span-2">
+    <%= f.label :priority, "Priority", class: "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1" %>
+    <%= f.select :priority, ["Low", "Medium", "High"], { include_blank: "Select" }, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0036f3] focus:ring-[#0036f3] text-sm" %>
+  </div>
+
+  <div class="md:col-span-1 flex justify-end">
+    <button type="button" class="remove-task-btn text-gray-400 hover:text-red-600 transition-colors p-2" title="Remove Task">
+      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+    </button>
+  </div>
+</div>
