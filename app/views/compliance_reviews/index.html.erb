@@ -45,7 +45,15 @@
       </thead>
       <tbody class="bg-white/50 divide-y divide-gray-200">
         <% @reviews.each do |review| %>
-          <% row_class = review.blocking? ? "bg-red-50/60 transition hover:bg-red-100/60" : "transition hover:bg-gray-50/60" %>
+          <% row_class = if review.blocking?
+                           if review.status == 'Pending'
+                             "bg-yellow-50/60 transition hover:bg-yellow-100/60"
+                           else
+                             "bg-red-50/60 transition hover:bg-red-100/60"
+                           end
+                         else
+                           "transition hover:bg-gray-50/60"
+                         end %>
           <tr class="<%= row_class %>">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
               <%= review.application_identifier %>
@@ -54,7 +62,11 @@
               <%= review.borrower_name %>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-              <span class="<%= review.blocking? ? 'text-red-700 font-bold' : '' %>">
+              <span class="<%= if review.blocking?
+                                review.status == 'Pending' ? 'text-yellow-800 font-bold' : 'text-red-700 font-bold'
+                              else
+                                ''
+                              end %>">
                 <%= review.target_closing_date&.strftime("%b %d, %Y") || 'N/A' %>
               </span>
             </td>
