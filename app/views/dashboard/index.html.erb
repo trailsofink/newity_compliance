@@ -4,39 +4,50 @@
 </div>
 
 <!-- Summary Cards -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
   <!-- Total -->
-  <div class="bg-white/70 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center transition hover:shadow-md">
-    <div class="p-3 rounded-full bg-blue-100 text-[#0036f3] mr-4">
+  <a href="<%= compliance_reviews_path %>" class="bg-white/70 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center transition hover:shadow-md hover:border-[#0036f3]/30 group block outline-none focus:ring-2 focus:ring-[#0036f3] focus:ring-offset-2">
+    <div class="p-3 rounded-full bg-blue-100 text-[#0036f3] mr-4 group-hover:bg-[#0036f3] group-hover:text-white transition-colors">
       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
     </div>
     <div>
-      <p class="text-sm font-medium text-gray-500 uppercase tracking-widest">Total Reviews</p>
+      <p class="text-sm font-medium text-gray-500 uppercase tracking-widest group-hover:text-gray-700">Total Reviews</p>
       <p class="text-3xl font-bold text-[#1d314c]"><%= @total_reviews %></p>
     </div>
-  </div>
+  </a>
 
   <!-- Pending -->
-  <div class="bg-white/70 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center transition hover:shadow-md">
-    <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+  <a href="<%= compliance_reviews_path(status: 'Pending', assigned_reviewer: '', commit: 'Filter') %>" class="bg-white/70 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center transition hover:shadow-md hover:border-yellow-400/50 group block outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2">
+    <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
     </div>
     <div>
-      <p class="text-sm font-medium text-gray-500 uppercase tracking-widest">Pending</p>
+      <p class="text-sm font-medium text-gray-500 uppercase tracking-widest group-hover:text-gray-700">Pending</p>
       <p class="text-3xl font-bold text-[#1d314c]"><%= @pending_count %></p>
     </div>
-  </div>
+  </a>
 
   <!-- Flagged -->
-  <div class="bg-white/70 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center transition hover:shadow-md">
-    <div class="p-3 rounded-full bg-red-100 text-red-600 mr-4">
+  <a href="<%= compliance_reviews_path(status: 'Flagged', assigned_reviewer: '', commit: 'Filter') %>" class="bg-white/70 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center transition hover:shadow-md hover:border-red-400/50 group block outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2">
+    <div class="p-3 rounded-full bg-red-100 text-red-600 mr-4 group-hover:bg-red-500 group-hover:text-white transition-colors">
       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
     </div>
     <div>
-      <p class="text-sm font-medium text-gray-500 uppercase tracking-widest">Flagged</p>
+      <p class="text-sm font-medium text-gray-500 uppercase tracking-widest group-hover:text-gray-700">Flagged</p>
       <p class="text-3xl font-bold text-[#1d314c]"><%= @flagged_count %></p>
     </div>
-  </div>
+  </a>
+
+  <!-- Overdue -->
+  <a href="<%= compliance_reviews_path(status: 'Overdue', assigned_reviewer: '', commit: 'Filter') %>" class="bg-white/70 backdrop-blur-lg rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center transition hover:shadow-md hover:border-orange-400/50 group block outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2">
+    <div class="p-3 rounded-full bg-orange-100 text-orange-600 mr-4 group-hover:bg-orange-500 group-hover:text-white transition-colors">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-gray-500 uppercase tracking-widest group-hover:text-gray-700">Overdue</p>
+      <p class="text-3xl font-bold text-[#1d314c]"><%= @overdue_count %></p>
+    </div>
+  </a>
 </div>
 
 <!-- Reviewer Capacity (Stoplight) -->
@@ -66,14 +77,14 @@
                                "bg-[#75ff6f]"
                              end
         %>
-        <div class="rounded-2xl border <%= color_class %> p-6 relative overflow-hidden flex flex-col items-center text-center shadow-sm">
+        <a href="<%= compliance_reviews_path(status: '', assigned_reviewer: reviewer, commit: 'Filter') %>" class="block rounded-2xl border <%= color_class %> p-6 relative overflow-hidden flex flex-col items-center text-center shadow-sm hover:shadow-md transition transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0036f3]">
           <div class="absolute top-0 w-full h-2 <%= indicator_class %>"></div>
           <div class="w-16 h-16 rounded-full flex items-center justify-center bg-white shadow-sm mb-4">
             <span class="text-2xl font-bold"><%= count %></span>
           </div>
           <h3 class="text-lg font-semibold"><%= reviewer.presence || "Unassigned" %></h3>
           <p class="text-sm mt-1 opacity-80 font-medium">Active Tasks</p>
-        </div>
+        </a>
       <% end %>
     </div>
   </div>

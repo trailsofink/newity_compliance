@@ -16,19 +16,29 @@ class ComplianceReview < ApplicationRecord
 
   # Scopes for querying the queue
   scope :blocking_closings, -> {
-    where(status: [ "Pending", "In Review", "Flagged" ])
+    where(closed: false)
+    .where(status: [ "Pending", "In Review", "Flagged" ])
     .order(target_closing_date: :asc)
   }
 
   scope :by_reviewer, ->(reviewer) { where(assigned_reviewer: reviewer) if reviewer.present? }
   scope :by_status, ->(status) { where(status: status) if status.present? }
 
+  scope :active, -> { where(closed: false) }
+  scope :closed, -> { where(closed: true) }
+
+  scope :overdue, -> {
+    where(closed: false)
+    .where(status: [ "Pending", "In Review", "Flagged" ])
+    .where("target_closing_date < ?", Date.today)
+  }
+
   def completed?
-    [ "Approved", "Flagged", "Waived" ].include?(status)
+    [ "Approved", "Flagged", "Waived" ].include?(status) || closed?
   end
 
   def blocking?
-    [ "Pending", "Flagged" ].include?(status) && target_closing_date.present? && target_closing_date <= 2.weeks.from_now
+    !closed? && [ "Pending", "Flagged" ].include?(status) && target_closing_date.present? && target_closing_date <= 2.weeks.from_now
   end
 
   private
